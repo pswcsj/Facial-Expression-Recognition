@@ -36,8 +36,10 @@ if __name__ == '__main__':
         running_train_loss = 0.0
         running_test_loss = 0.0
         for i, (images, labels) in enumerate(train_dataloader, 0):
+            images, labels = images.to(device), labels.to(device)
             running_train_loss += loss_function(model(images), labels).item() / images.shape[0]
         for i, (images, labels) in enumerate(test_dataloader, 0):
+            images, labels = images.to(device), labels.to(device)
             running_test_loss += loss_function(model(images), labels).item() / images.shape[0]
         train_losses.append(running_train_loss)
         test_losses.append(running_test_loss)
