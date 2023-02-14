@@ -32,8 +32,8 @@ class FERTrainDataSet(Dataset):
         dir_path = os.path.dirname(os.path.realpath(__file__))
         # 캐시에 저장되어 있는지 확인하여 만약 저장되어 있다면 저장된 값을 사용
         if os.path.isfile(dir_path + '/cache/train/data.pt') and os.path.isfile(dir_path + '/cache/train/label.pt'):
-            self.emotion = torch.load('data_loader/cache/train/label.pt')
-            self.data = torch.load('data_loader/cache/train/data.pt')
+            self.emotion = torch.load(dir_path+'/cache/train/label.pt')
+            self.data = torch.load(dir_path+'/cache/train/data.pt')
             self.len = self.emotion.shape[0]
             return
 
@@ -64,8 +64,8 @@ class FERTestDataSet(Dataset):
         dir_path = os.path.dirname(os.path.realpath(__file__))
 
         if os.path.isfile(dir_path + '/cache/test/data.pt') and os.path.isfile(dir_path + '/cache/test/label.pt'):
-            self.emotion = torch.load('data_loader/cache/test/label.pt')
-            self.data = torch.load('data_loader/cache/test/data.pt')
+            self.emotion = torch.load(dir_path+'/cache/test/label.pt')
+            self.data = torch.load(dir_path+'/cache/test/data.pt')
             self.len = self.emotion.shape[0]
             return
 
