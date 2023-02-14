@@ -74,7 +74,6 @@ class FERTestDataSet(Dataset):
 
         self.emotion = df['emotion'].apply(lambda a: torch.FloatTensor([1 if i == a else 0 for i in range(7)])).values
         self.data = df['pixels'].apply(lambda a: torch.FloatTensor(list(map(int, a.split(' ')))).reshape(1, 48, 48))
-
         self.len = self.emotion.shape[0]
 
         torch.save(self.data, 'data_loader/cache/test/data.pt')

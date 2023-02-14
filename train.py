@@ -21,12 +21,12 @@ if __name__ == '__main__':
 
     train_losses = []
     test_losses = []
+    # running_loss = 0.0
     model.train()
     for epoch in range(epochs):
         print(f"{epoch}th epoch starting.")
         for i, (images, labels) in enumerate(train_dataloader):
             images, labels = images.to(device), labels.to(device)
-            print(model(images).shape, labels.shape)
             optimizer.zero_grad()
             train_loss = loss_function(model(images), labels)
             train_loss.backward()
@@ -41,6 +41,9 @@ if __name__ == '__main__':
             running_test_loss += loss_function(model(images), labels).item() / images.shape[0]
         train_losses.append(running_train_loss)
         test_losses.append(running_test_loss)
+        # running_loss = 0.0
+        # for i, data in enumerate(train_loader, 0):
+        #     running_loss +=
     model.eval()
     test_loss, correct, total = 0, 0, 0
     for i, (images, labels) in enumerate(test_dataloader):

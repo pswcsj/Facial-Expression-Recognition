@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
+<<<<<<< HEAD
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/data_loader/cache" />
     </content>
+=======
+    <content url="file://$MODULE_DIR$" />
+>>>>>>> 0f3771c6c1b8128321db0ff45e4d9d352432765c
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
