@@ -5,9 +5,15 @@ import torch.nn as nn
 from model.EfficientNet import EfficientNet
 from data_loader import FERTrainDataLoader, FERTestDataLoader, FERTestDataSet
 import matplotlib.pyplot as plt
+import argparse
+parser = argparse.ArgumentParser()    #
+
+# 3. parser.add_argument로 받아들일 인수를 추가해나간다.
+parser.add_argument('--epochs', type=int, default=128)
+args = parser.parse_args()
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-epochs = 128
+epochs = args.epochs
 if __name__ == '__main__':
     train_dataloader = FERTrainDataLoader(batch_size=400)  # 학습용 데이터셋
     test_dataloader = FERTestDataLoader()  # 테스트용 데이터셋
