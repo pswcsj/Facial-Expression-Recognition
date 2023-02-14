@@ -3,7 +3,7 @@ from torchvision import transforms
 from PIL import Image
 import torch.nn as nn
 from model.EfficientNet import EfficientNet
-from data_loader import FERTrainDataLoader, FERTestDataLoader
+from data_loader import FERTrainDataLoader, FERTestDataLoader, FERTestDataSet
 import matplotlib.pyplot as plt
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -11,7 +11,7 @@ epochs = 128
 if __name__ == '__main__':
     train_dataloader = FERTrainDataLoader(batch_size=400)  # 학습용 데이터셋
     test_dataloader = FERTestDataLoader()  # 테스트용 데이터셋
-
+    test_dataset = FERTestDataSet()
     # 모델 정의한 후 device로 보내기
     model = EfficientNet.from_pretrained('EfficientNet-b7', num_classes=7, in_channels=1).to(device)
     # loss function 정의 classification 문제이니 CrossEntropyLoss 사용
@@ -25,6 +25,12 @@ if __name__ == '__main__':
     model.train()
     for epoch in range(epochs):
         print(f"{epoch}th epoch starting.")
+        running_test_loss=0
+        # for i, (images, labels) in enumerate(test_dataloader):
+        #     images, labels = images.to(device), labels.to(device)
+        #     print(images.shape, labels.shape)
+        #     print(model(images).shape, labels.shape)
+        #     running_test_loss += loss_function(model(images), labels).item() / images.shape[0]
         for i, (images, labels) in enumerate(train_dataloader):
             images, labels = images.to(device), labels.to(device)
             optimizer.zero_grad()
@@ -41,6 +47,7 @@ if __name__ == '__main__':
         for i, (images, labels) in enumerate(test_dataloader, 0):
             images, labels = images.to(device), labels.to(device)
             running_test_loss += loss_function(model(images), labels).item() / images.shape[0]
+            print(running_test_loss)
         train_losses.append(running_train_loss)
         test_losses.append(running_test_loss)
         # running_loss = 0.0
