@@ -10,10 +10,11 @@ __all__ = ['FERTrainDataLoader', 'FERTrainDataSet', 'FERTestDataSet']
 class FERTrainDataLoader(DataLoader):
     def __init__(self, batch_size, shuffle=True, num_workers=0):
         trsfm = transforms.Compose([
-            transforms.Normalize(0, 1),  # 데이터셋을 정규화
+            transforms.ToPILImage(),
             transforms.RandomHorizontalFlip(),
             transforms.RandomRotation((-45, 45)),
             transforms.ColorJitter(brightness=0.5),
+            transforms.ToTensor()
         ])
 
         self.dataset = FERTrainDataSet(transform=trsfm)
@@ -22,7 +23,11 @@ class FERTrainDataLoader(DataLoader):
 
 class FERTestDataLoader(DataLoader):
     def __init__(self, batch_size=1, shuffle=False, num_workers=0):
-        self.dataset = FERTestDataSet()
+        trsfm = transforms.Compose([
+            transforms.ToPILImage(),
+            transforms.ToTensor()
+        ])
+        self.dataset = FERTestDataSet(transform=trsfm)
         super().__init__(dataset=self.dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
 
 

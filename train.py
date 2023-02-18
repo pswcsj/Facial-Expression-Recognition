@@ -15,7 +15,7 @@ args = parser.parse_args()
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 epochs = args.epochs
 if __name__ == '__main__':
-    train_dataloader = FERTrainDataLoader(batch_size=400)  # 학습용 데이터셋
+    train_dataloader = FERTrainDataLoader(batch_size=128)  # 학습용 데이터셋
     test_dataloader = FERTestDataLoader()  # 테스트용 데이터셋
     test_dataset = FERTestDataSet()
     # 모델 정의한 후 device로 보내기
