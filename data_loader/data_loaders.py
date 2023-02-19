@@ -3,7 +3,7 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 import pandas as pd
 import os
-
+import numpy as np
 __all__ = ['FERTrainDataLoader', 'FERTrainDataSet', 'FERTestDataSet']
 
 
@@ -46,9 +46,8 @@ class FERTrainDataSet(Dataset):
         df = pd.read_csv('dataset/fer2013.csv')
         df = df[df['Usage'] == 'Training']
 
-        self.emotion = df['emotion'].apply(lambda a: torch.FloatTensor([1 if i == a else 0 for i in range(7)])).values
+        self.emotion = torch.LongTensor(df['emotion'].values)
         self.data = df['pixels'].apply(lambda a: torch.FloatTensor(list(map(int, a.split(' ')))).reshape(1, 48, 48)).values
-
         self.len = self.emotion.shape[0]
 
         torch.save(self.data, 'data_loader/cache/train/data.pt')
@@ -76,7 +75,7 @@ class FERTestDataSet(Dataset):
 
         df = pd.read_csv('dataset/fer2013.csv')
         df = df[(df['Usage'] == 'PrivateTest') | (df['Usage'] == 'PublicTest')]
-        self.emotion = df['emotion'].apply(lambda a: torch.FloatTensor([1 if i == a else 0 for i in range(7)])).values
+        self.emotion = torch.LongTensor(df['emotion'].values)
         self.data = df['pixels'].apply(lambda a: torch.FloatTensor(list(map(int, a.split(' ')))).reshape(1, 48, 48)).values
         self.len = self.emotion.shape[0]
 

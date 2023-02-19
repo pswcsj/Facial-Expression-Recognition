@@ -217,7 +217,7 @@ class EfficientNet(nn.Module):
 
         # set activation to memory efficient swish by default
         self._swish = MemoryEfficientSwish()
-
+        self.classification = nn.Softmax(dim=0)
     def set_swish(self, memory_efficient=True):
         """Sets swish function as memory efficient (for training) or standard (for export).
 
@@ -318,7 +318,7 @@ class EfficientNet(nn.Module):
             x = x.flatten(start_dim=1)
             x = self._dropout(x)
             x = self._fc(x)
-        return x
+        return self.classification(x)
 
     @classmethod
     def from_name(cls, model_name, in_channels=3, **override_params):
