@@ -1,1 +1,1 @@
-from data_loader.data_loaders import FERTrainDataSet, FERTrainDataLoader, FERTestDataLoader, FERTestDataSet
+from data_loader.data_loaders import FERTrainDataSet, FERTrainDataLoader, FERTestDataLoader, FERTestDataSet, AffectNetDataLoader

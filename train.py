@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.optim as optim
 from model.EfficientNet import EfficientNet
 import model.loss as module_loss
-from data_loader import FERTrainDataLoader, FERTestDataLoader, FERTestDataSet
+from data_loader import
 import matplotlib.pyplot as plt
 import argparse
 import torch.nn.functional as F
@@ -14,19 +14,19 @@ parser = argparse.ArgumentParser()  #
 
 a = {'0': 'neutral', '1': 'happy', '2': 'sad', '3': 'surprise', '4': 'anger'}  # 라벨링
 # 3. parser.add_argument로 받아들일 인수를 추가해나간다.
-parser.add_argument('--epochs', type=int, default=128)
+parser.add_argument('--epochs', type=int, default=8)
 args = parser.parse_args()
 
 eps = 0.05
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 epochs = args.epochs
 if __name__ == '__main__':
-    train_dataloader = FERTrainDataLoader(batch_size=128)  # 학습용 데이터셋
-    test_dataloader = FERTestDataLoader(batch_size=2500)  # 테스트용 데이터셋
+    train_dataloader = AffectNetDataLoader(path="./dataset", batch_size=128, train=True, num_workers=300)  # 학습용 데이터셋
+    test_dataloader = AffectNetDataLoader(path="./dataset", batch_size=2500, train=False, shuffle=False, num_workers=300)  # 테스트용 데이터셋
 
     # 모델 정의한 후 device로 보내기
     model = EfficientNet.from_pretrained('EfficientNet-b2', weights_path='./model/pretrained/face_recognition'
-                                                                         '/ENetB2_VggFace2.pt')
+                                                                         '/ENetB2_VggFace2.pt').to(device)
 
     # optimizer로는 Adam 사용
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
@@ -34,10 +34,9 @@ if __name__ == '__main__':
     train_losses = []
     test_losses = []
 
+    model.train()
     for epoch in range(epochs):
-        model.train()
         print(f"{epoch}th epoch starting.")
-        running_test_loss = 0
         for i, (images, labels) in enumerate(train_dataloader):
             images, labels = images.to(device), labels.to(device)
 
@@ -65,7 +64,7 @@ if __name__ == '__main__':
 
             # 다시 원래 파라미터로 돌아간 후, backpropagation 진행(new_theta로 forward pass를 계산해야 하지만,
             # backward pass는 theta로 해야하기 때문
-            torch.nn.utils.vector_to_parameters(theta, model.parameters())
+            nn.utils.vector_to_parameters(theta, model.parameters())
             train_loss.backward()
 
             optimizer.step()
