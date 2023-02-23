@@ -3,6 +3,7 @@ import torch
 from model.EfficientNet import EfficientNet
 from data_loader import FERTrainDataLoader, FERTestDataLoader, FERTestDataSet
 from PIL import Image
+from torchvision import transforms
 
 # cap = cv2.VideoCapture(0)
 # print(111)

@@ -1,9 +1,11 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
+from PIL import Image
 import pandas as pd
 import os
 import numpy as np
+
 __all__ = ['FERTrainDataLoader', 'FERTrainDataSet', 'FERTestDataSet']
 
 
@@ -47,7 +49,8 @@ class FERTrainDataSet(Dataset):
         df = df[df['Usage'] == 'Training']
 
         self.emotion = torch.LongTensor(df['emotion'].values)
-        self.data = df['pixels'].apply(lambda a: torch.FloatTensor(list(map(int, a.split(' ')))).reshape(1, 48, 48)).values
+        self.data = df['pixels'].apply(
+            lambda a: torch.FloatTensor(list(map(int, a.split(' ')))).reshape(1, 48, 48)).values
         self.len = self.emotion.shape[0]
 
         torch.save(self.data, 'data_loader/cache/train/data.pt')
@@ -76,7 +79,8 @@ class FERTestDataSet(Dataset):
         df = pd.read_csv('dataset/fer2013.csv')
         df = df[(df['Usage'] == 'PrivateTest') | (df['Usage'] == 'PublicTest')]
         self.emotion = torch.LongTensor(df['emotion'].values)
-        self.data = df['pixels'].apply(lambda a: torch.FloatTensor(list(map(int, a.split(' ')))).reshape(1, 48, 48)).values
+        self.data = df['pixels'].apply(
+            lambda a: torch.FloatTensor(list(map(int, a.split(' ')))).reshape(1, 48, 48)).values
         self.len = self.emotion.shape[0]
 
         torch.save(self.data, 'data_loader/cache/test/data.pt')
@@ -86,6 +90,51 @@ class FERTestDataSet(Dataset):
         if self.transform:
             return self.transform(self.data[index]), self.emotion[index]
         return self.data[index], self.emotion[index]
+
+    def __len__(self):
+        return self.len
+
+
+class AffectNetDataLoader(DataLoader):
+    def __init__(self, path, batch_size, train=True, shuffle=True, num_workers=0):
+        if train:
+            trsfm = transforms.Compose([
+                transforms.RandomHorizontalFlip(),
+                transforms.RandomRotation((-45, 45)),
+                transforms.ColorJitter(brightness=0.5),
+                transforms.ToTensor()
+            ])
+        else:
+            trsfm = ransforms.ToTensor()
+
+        self.dataset = AffectNetDataset(path, train=train, transform=trsfm)
+        super().__init__(dataset=self.dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
+
+
+class AffectNetDataset(Dataset):
+    def __init__(self, path, train=True, transform=None):
+        self.transform = transform
+        self.path = path
+
+        if train:
+            self.img_path = path + '/train_set/images'
+            self.label_path = path + '/train_set/annotations'
+        else:
+            self.img_path = path + '/val_set/images'
+            self.label_path = path + '/val_set/annotations'
+
+        self.img_list = []
+        for img_path in os.listdir(self.img_path):
+            self.img_list.append(Image.open(img_path))
+        self.label_list = os.listdir(self.label_path)
+        self.len = len(self.img_list)
+
+    def __getitem__(self, index):
+        img = self.img_list[index]
+        label = self.label_list[index]
+        if self.transform:
+            return self.transform(img), label
+        return img, label
 
     def __len__(self):
         return self.len
