@@ -117,15 +117,15 @@ class AffectNetDataset(Dataset):
         self.path = path
 
         if train:
-            self.img_path = path + '/train_set/images'
-            self.label_path = path + '/train_set/annotations'
+            self.img_path = self.path + '/train_set/images'
+            self.label_path = self.path + '/train_set/annotations'
         else:
-            self.img_path = path + '/val_set/images'
-            self.label_path = path + '/val_set/annotations'
+            self.img_path = self.path + '/val_set/images'
+            self.label_path = self.path + '/val_set/annotations'
 
         self.img_list = []
         for img_path in os.listdir(self.img_path):
-            self.img_list.append(Image.open(img_path))
+            self.img_list.append(Image.open(self.img_path+'/'+img_path))
         self.label_list = os.listdir(self.label_path)
         self.len = len(self.img_list)
 
