@@ -4,26 +4,30 @@ from model.EfficientNet import EfficientNet
 from data_loader import FERTrainDataLoader, FERTestDataLoader, FERTestDataSet
 from PIL import Image
 from torchvision import transforms
-
+from mtcnn import MTCNN
 # cap = cv2.VideoCapture(0)
 # print(111)
 
-
-model = EfficientNet.from_pretrained('EfficientNet-b7', num_classes=7, in_channels=1)
-model.load_state_dict(torch.load('model.pt', map_location=torch.device('cpu')))
-model.eval()
-
-loader = transforms.Compose([transforms.Scale(48), transforms.Grayscale(1), transforms.ToTensor()])
-
+loader = transforms.Resize((224, 224))
+convert_tensor = transforms.ToTensor()
 def image_loader(image_name):
     """load image, returns cuda tensor"""
     image = Image.open(image_name)
-    image = loader(image).float()
-    image = Variable(image, requires_grad=True)
-    image = image.unsqueeze(0)  #this is for VGG, may not be needed for ResNet
-    return image #assumes that you're using GPU
+    # image = loader(image).float()
+    return convert_tensor(image) #assumes that you're using GPU
 
-image = image_loader('smile.jpeg')
+img = image_loader('smile.jpeg')
+
+detector = MTCNN()
+# model = EfficientNet.from_pretrained('./model/pretrained/emotion/model.pt')
+# model.eval()
+faces = detector.detect_faces(img)
+for face in faces:
+    top_left_x, top_left_y, width, height = face['box']
+    cropped_img = img[:, top_left_y:top_left_y+height, top_left_x:top_left_x+width]
+    x = loader(cropped_img)
+    print(torch.argmax(model(x)))
+
 
 model(image)
 # Check if the webcam is opened correctly

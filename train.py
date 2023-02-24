@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import argparse
 import torch.nn.functional as F
 import torch.multiprocessing
-torch.multiprocessing.set_sharing_strategy('file_system')
 
 parser = argparse.ArgumentParser()  #
 
@@ -23,8 +22,8 @@ eps = 0.05
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 epochs = args.epochs
 if __name__ == '__main__':
-    train_dataloader = AffectNetDataLoader(path="./dataset", batch_size=128, train=True, num_workers=300)  # 학습용 데이터셋
-    test_dataloader = AffectNetDataLoader(path="./dataset", batch_size=2500, train=False, shuffle=False, num_workers=300)  # 테스트용 데이터셋
+    train_dataloader = AffectNetDataLoader(path="./dataset", batch_size=128, train=True, num_workers=100)  # 학습용 데이터셋
+    test_dataloader = AffectNetDataLoader(path="./dataset", batch_size=2500, train=False, shuffle=False, num_workers=100)  # 테스트용 데이터셋
 
     # 모델 정의한 후 device로 보내기
     model = EfficientNet.from_pretrained('EfficientNet-b2', weights_path='./model/pretrained/face_recognition'
