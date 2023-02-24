@@ -5,6 +5,7 @@ from PIL import Image
 import pandas as pd
 import os
 import numpy as np
+import copy
 
 __all__ = ['FERTrainDataLoader', 'FERTrainDataSet', 'FERTestDataSet']
 
@@ -127,7 +128,8 @@ class AffectNetDataset(Dataset):
         i=0
         for img_path in filter(lambda u: u[0] != '.', os.listdir(self.img_path)):
             print(i)
-            self.img_list.append(Image.open(self.img_path+'/'+img_path))
+            img_cp = Image.open(self.img_path+'/'+img_path)
+            self.img_list.append(img_cp)
             i+=1
         self.label_list = filter(lambda u: u[0] != '.', os.listdir(self.label_path))
         self.len = len(self.img_list)
