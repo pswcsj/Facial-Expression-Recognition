@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.optim as optim
 from model.EfficientNet import EfficientNet
 import model.loss as module_loss
-from data_loader import
+from data_loader import AffectNetDataLoader
 import matplotlib.pyplot as plt
 import argparse
 import torch.nn.functional as F
