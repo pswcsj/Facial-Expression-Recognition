@@ -9,6 +9,8 @@ from data_loader import AffectNetDataLoader
 import matplotlib.pyplot as plt
 import argparse
 import torch.nn.functional as F
+import torch.multiprocessing
+torch.multiprocessing.set_sharing_strategy('file_system')
 
 parser = argparse.ArgumentParser()  #
 
