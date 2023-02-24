@@ -19,6 +19,7 @@ args = parser.parse_args()
 
 eps = 0.05
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print(device)
 epochs = args.epochs
 if __name__ == '__main__':
     train_dataloader = AffectNetDataLoader(path="./dataset", batch_size=128, train=True, num_workers=300)  # 학습용 데이터셋
