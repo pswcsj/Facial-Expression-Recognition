@@ -124,19 +124,15 @@ class AffectNetDataset(Dataset):
             self.img_path = self.path + '/val_set/images'
             self.label_path = self.path + '/val_set/annotations'
 
-        self.img_list = []
-        i=0
-        for img_path in filter(lambda u: u[0] != '.', os.listdir(self.img_path)):
-            print(i)
-            img_cp = Image.open(self.img_path+'/'+img_path)
-            self.img_list.append(img_cp)
-            i+=1
-        self.label_list = filter(lambda u: u[0] != '.', os.listdir(self.label_path))
+        self.img_list = list(filter(lambda u: u[0] != '.', os.listdir(self.img_path)))
+        self.label_list = list(filter(lambda u: u[0] != '.', os.listdir(self.label_path)))
         self.len = len(self.img_list)
 
     def __getitem__(self, index):
-        img = self.img_list[index]
-        label = self.label_list[index]
+        img_path = self.img_list[index]
+        label_path = self.label_list[index]
+        img = Image.open(self.img_path+'/'+img_path)
+        label = np.load(self.label_path+'/'+label_path)
         if self.transform:
             return self.transform(img), label
         return img, label
