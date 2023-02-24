@@ -106,7 +106,7 @@ class AffectNetDataLoader(DataLoader):
                 transforms.ToTensor()
             ])
         else:
-            trsfm = ransforms.ToTensor()
+            trsfm = transforms.ToTensor()
 
         self.dataset = AffectNetDataset(path, train=train, transform=trsfm)
         super().__init__(dataset=self.dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
