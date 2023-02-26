@@ -9,8 +9,7 @@ from data_loader import AffectNetDataLoader
 import matplotlib.pyplot as plt
 import argparse
 import torch.nn.functional as F
-import torch.multiprocessing
-
+from utils.util import load_pretrained
 parser = argparse.ArgumentParser()  #
 
 a = {'0': 'neutral', '1': 'happy', '2': 'sad', '3': 'surprise', '4': 'anger'}  # 라벨링
@@ -26,8 +25,8 @@ if __name__ == '__main__':
     test_dataloader = AffectNetDataLoader(path="./dataset", batch_size=2500, train=False, shuffle=False, num_workers=100)  # 테스트용 데이터셋
 
     # 모델 정의한 후 device로 보내기
-    model = EfficientNet.from_pretrained('EfficientNet-b2', weights_path='./model/pretrained/face_recognition'
-                                                                         '/ENetB2_VggFace2.pt').to(device)
+    model = EfficientNet.from_pretrained('EfficientNet-b2').to(device)
+    load_pretrained(model, './model/pretrained/face_recognition/ENetB2_VggFace2.pt')
 
     # optimizer로는 Adam 사용
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
