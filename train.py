@@ -15,14 +15,17 @@ parser = argparse.ArgumentParser()  #
 a = {'0': 'neutral', '1': 'happy', '2': 'sad', '3': 'surprise', '4': 'anger'}  # 라벨링
 # 3. parser.add_argument로 받아들일 인수를 추가해나간다.
 parser.add_argument('--epochs', type=int, default=8)
+parser.add_argument('--path', default="./dataset")
+
 args = parser.parse_args()
 
 eps = 0.05
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 epochs = args.epochs
+path = args.path
 if __name__ == '__main__':
-    train_dataloader = AffectNetDataLoader(path="./dataset", batch_size=128, train=True, num_workers=100)  # 학습용 데이터셋
-    test_dataloader = AffectNetDataLoader(path="./dataset", batch_size=2500, train=False, shuffle=False, num_workers=100)  # 테스트용 데이터셋
+    train_dataloader = AffectNetDataLoader(path=path, batch_size=128, train=True, num_workers=100)  # 학습용 데이터셋
+    test_dataloader = AffectNetDataLoader(path=path, batch_size=2500, train=False, shuffle=False, num_workers=100)  # 테스트용 데이터셋
 
     # 모델 정의한 후 device로 보내기
     model = EfficientNet.from_pretrained('EfficientNet-b2').to(device)
