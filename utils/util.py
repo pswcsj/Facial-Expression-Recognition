@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from model.EfficientNet import MBConvBlock
 
 
 def load_pretrained(model, weights_path):
