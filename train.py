@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import argparse
 import torch.nn.functional as F
 from utils.util import load_pretrained
+
 parser = argparse.ArgumentParser()  #
 
 a = {'0': 'neutral', '1': 'happy', '2': 'sad', '3': 'surprise', '4': 'anger'}  # 라벨링
@@ -23,11 +24,16 @@ eps = 0.05
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 epochs = args.epochs
 path = args.path
+
+
 if __name__ == '__main__':
     train_dataloader = AffectNetDataLoader(path=path, batch_size=128, train=True, num_workers=100)  # 학습용 데이터셋
-    test_dataloader = AffectNetDataLoader(path=path, batch_size=2500, train=False, shuffle=False, num_workers=100)  # 테스트용 데이터셋
-
+    test_dataloader = AffectNetDataLoader(path=path, batch_size=2500, train=False, shuffle=False,
+                                          num_workers=100)  # 테스트용 데이터셋
     # 모델 정의한 후 device로 보내기
+
+    # Change to this code When created pt file is saved
+    # model = EfficientNet.from_pretrained('EfficientNet-b2', './model/pretrained/face_recognition/ENetB2_VggFace2_cache.pt').to(device)
     model = EfficientNet.from_pretrained('EfficientNet-b2').to(device)
     load_pretrained(model, './model/pretrained/face_recognition/ENetB2_VggFace2.pt')
 
@@ -51,7 +57,9 @@ if __name__ == '__main__':
             grad_vector = []
             for parameter in model.parameters():
                 grad_vector.append(torch.flatten(parameter.grad))
-            grad_vector = torch.norm(torch.cat(grad_vector))  # 단위 벡터로 만들어줌
+            # torch.norm : 벡터의 크기를 구해주는 함수.
+            grad_vector = torch.cat(grad_vector)
+            grad_vector = grad_vector/torch.norm(grad_vector)  # 단위 벡터로 만들어줌
             grad_vector = eps * grad_vector  # epsilon=0.05를 곱해줘 크기 조정
 
             # parameter를 벡터로 만듦
