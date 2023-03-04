@@ -43,7 +43,7 @@ def make_model_from_pretrained(weights_path):
     if isinstance(weights_path, str):
         state_dict = torch.load(weights_path)
 
-    model = EfficientNet.from_pretrained('EfficientNet-b2', '0model.pt')
+    model = EfficientNet.from_pretrained('EfficientNet-b2')
     model._fc = nn.Linear(1408, 5).to(device) #last layer을 out에 맞게 바꿔줌
 
     flag = False

@@ -20,7 +20,7 @@ def image_loader(image_name):
 img = image_loader('smile.jpeg')
 
 # detector = MTCNN()
-model = make_model_from_pretrained('0model.pt')
+model = make_model_from_pretrained('1model.pt')
 model.eval()
 # faces = detector.detect_faces(img)
 # for face in faces:
