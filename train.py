@@ -16,6 +16,7 @@ parser = argparse.ArgumentParser()  #
 a = {'0': 'neutral', '1': 'happy', '2': 'sad', '3': 'surprise', '4': 'anger'}  # 라벨링
 # 3. parser.add_argument로 받아들일 인수를 추가해나간다.
 parser.add_argument('--epochs', type=int, default=8)
+parser.add_argument('--batch', type=int, default=32)
 parser.add_argument('--path', default="./dataset")
 
 args = parser.parse_args()
@@ -24,11 +25,12 @@ eps = 0.05
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 epochs = args.epochs
 path = args.path
+batch_size = args.batch
 
 
 if __name__ == '__main__':
-    train_dataloader = AffectNetDataLoader(path=path, batch_size=48, train=True)  # 학습용 데이터셋
-    test_dataloader = AffectNetDataLoader(path=path, batch_size=48, train=False, shuffle=False)  # 테스트용 데이터셋
+    train_dataloader = AffectNetDataLoader(path=path, batch_size=batch_size, train=True)  # 학습용 데이터셋
+    test_dataloader = AffectNetDataLoader(path=path, batch_size=batch_size, train=False, shuffle=False)  # 테스트용 데이터셋
     # 모델 정의한 후 device로 보내기
     model = EfficientNet.from_pretrained('EfficientNet-b2', './model/pretrained/face_recognition/ENetB2_VggFace2_modified.pt').to(device)
     model._fc = nn.Linear(1408, 5).to(device) #last layer을 out에 맞게 바꿔줌
