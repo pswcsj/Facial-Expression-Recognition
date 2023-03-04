@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 from model.EfficientNet import EfficientNet
 
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
 #현재 모델의 ENet과 다른 모델로 만든 pt 파일을 현재 모델의 ENet에 적용하고 가중치를 저장하는 함수
 # 변환된 가중치 파일은 ENetB2_VggFace2_modified.pt으로 저장됨
 def load_pretrained(model, weights_path):
