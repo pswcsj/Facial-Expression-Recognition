@@ -64,7 +64,7 @@ if __name__ == '__main__':
                 grad_vector.append(torch.flatten(parameter.grad))
             # torch.norm : 벡터의 크기를 구해주는 함수.
             grad_vector = torch.cat(grad_vector)
-            grad_vector = grad_vector/torch.norm(grad_vector)  # 단위 벡터로 만들어줌
+            grad_vector = grad_vector/(torch.norm(grad_vector) + 1e-6)  # 단위 벡터로 만들어줌
             grad_vector = eps * grad_vector  # epsilon=0.05를 곱해줘 크기 조정
 
             # parameter를 벡터로 만듦
@@ -84,6 +84,7 @@ if __name__ == '__main__':
             train_loss.backward()
 
             optimizer.step()
+        torch.save(model.state_dict(), f'{epoch} model.pt')
         scheduler.step()
     for param in model.parameters():
         param.requires_grad = True
@@ -103,7 +104,7 @@ if __name__ == '__main__':
                 grad_vector.append(torch.flatten(parameter.grad))
             # torch.norm : 벡터의 크기를 구해주는 함수.
             grad_vector = torch.cat(grad_vector)
-            grad_vector = grad_vector/torch.norm(grad_vector)  # 단위 벡터로 만들어줌
+            grad_vector = grad_vector/(torch.norm(grad_vector) + 1e-6)  # 단위 벡터로 만들어줌
             grad_vector = eps * grad_vector  # epsilon=0.05를 곱해줘 크기 조정
 
             # parameter를 벡터로 만듦
@@ -123,6 +124,7 @@ if __name__ == '__main__':
             train_loss.backward()
 
             optimizer.step()
+        torch.save(model.state_dict(), f'{epoch} model.pt')
         scheduler.step()
         # model.eval()
         # running_train_loss = 0.0
