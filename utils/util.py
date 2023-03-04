@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from model.EfficientNet import EfficientNet
 
 #현재 모델의 ENet과 다른 모델로 만든 pt 파일을 현재 모델의 ENet에 적용하고 가중치를 저장하는 함수
 # 변환된 가중치 파일은 ENetB2_VggFace2_modified.pt으로 저장됨
@@ -35,3 +36,35 @@ def load_pretrained(model, weights_path):
 
     torch.save(model.state_dict(), 'ENetB2_VggFace2_modified.pt')
     print('loaded')
+
+
+def make_model_from_pretrained(weights_path):
+
+    if isinstance(weights_path, str):
+        state_dict = torch.load(weights_path)
+
+    model = EfficientNet.from_pretrained('EfficientNet-b2', '0model.pt')
+    model._fc = nn.Linear(1408, 5).to(device) #last layer을 out에 맞게 바꿔줌
+
+    flag = False
+    for module in model.modules():
+        if isinstance(module, nn.Conv2d) or isinstance(module, nn.BatchNorm2d):
+            if not flag:
+                key, value = state_dict.popitem(last=False)
+                flag = False
+
+            point = '.'.join(key.split('.')[:-1])
+            while point in key:
+                if 'weight' in key or 'bias' in key:
+                    setattr(module, key.split('.')[-1], nn.Parameter(value.float()))
+                else:
+                    setattr(module, key.split('.')[-1], value.float())
+                print(module, key)
+
+                if state_dict:
+                    key, value = state_dict.popitem(last=False)
+                    flag = True
+                else:
+                    break
+    assert not state_dict
+    return model

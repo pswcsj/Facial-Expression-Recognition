@@ -1,10 +1,11 @@
-import cv2
+# import cv2
 import torch
 from model.EfficientNet import EfficientNet
-from data_loader import FERTrainDataLoader, FERTestDataLoader, FERTestDataSet
+# from data_loader import FERTrainDataLoader, FERTestDataLoader, FERTestDataSet
 from PIL import Image
 from torchvision import transforms
-from mtcnn import MTCNN
+from utils.util import make_model_from_pretrained
+# from mtcnn import MTCNN
 # cap = cv2.VideoCapture(0)
 # print(111)
 
@@ -18,18 +19,18 @@ def image_loader(image_name):
 
 img = image_loader('smile.jpeg')
 
-detector = MTCNN()
-# model = EfficientNet.from_pretrained('./model/pretrained/emotion/model.pt')
-# model.eval()
-faces = detector.detect_faces(img)
-for face in faces:
-    top_left_x, top_left_y, width, height = face['box']
-    cropped_img = img[:, top_left_y:top_left_y+height, top_left_x:top_left_x+width]
-    x = loader(cropped_img)
-    print(torch.argmax(model(x)))
+# detector = MTCNN()
+model = make_model_from_pretrained('0model.pt')
+model.eval()
+# faces = detector.detect_faces(img)
+# for face in faces:
+#     top_left_x, top_left_y, width, height = face['box']
+#     cropped_img = img[:, top_left_y:top_left_y+height, top_left_x:top_left_x+width]
+#     x = loader(cropped_img)
+#     print(torch.argmax(model(x)))
 
 
-model(image)
+print(model(image))
 # Check if the webcam is opened correctly
 # if not cap.isOpened():
 #     raise IOError("Cannot open webcam")
