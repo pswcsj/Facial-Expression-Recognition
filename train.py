@@ -108,6 +108,10 @@ if __name__ == '__main__':
         scheduler.step()
     for param in model.parameters():
         param.requires_grad = True
+
+    del train_dataloader
+    train_dataloader = AffectNetDataLoader(path=path, batch_size=64, train=True)  # 학습용 데이터셋
+
     for epoch in range(second_epochs):
         print(f"{first_epochs+epoch}th epoch starting.")
         #만약 epoch이 3이면 모든 파라미터를 훈련
