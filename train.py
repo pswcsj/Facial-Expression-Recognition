@@ -26,7 +26,9 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 epochs = args.epochs
 path = args.path
 batch_size = args.batch
-
+gamma = 0.7
+first_epochs = 10
+second_epochs = 30
 
 if __name__ == '__main__':
     train_dataloader = AffectNetDataLoader(path=path, batch_size=batch_size, train=True)  # 학습용 데이터셋
@@ -38,10 +40,8 @@ if __name__ == '__main__':
     # load_pretrained(model, './model/pretrained/face_recognition/ENetB2_VggFace2.pt')
 
     # optimizer로는 Adam 사용
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
-    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
-    train_losses = []
-    test_losses = []
+    optimizer = torch.optim.Adam(model.parameters(), lr=3e-5)
+    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=gamma)
 
     model.train()
 
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     model._fc.weight.requires_grad = True
     model._fc.bias.requires_grad = True
     
-    for epoch in range(3):
+    for epoch in range(first_epochs):
         print(f"{epoch}th epoch starting.")
         for i, (images, labels) in enumerate(train_dataloader):
             images, labels = images.to(device), labels.to(device)
@@ -86,12 +86,30 @@ if __name__ == '__main__':
             train_loss.backward()
 
             optimizer.step()
-        torch.save(model.state_dict(), f'{epoch} model.pt')
+        torch.save(f'model/pretrained/emotion/{model.state_dict()}', f'{epoch}model.pt')
+
+        with torch.no_grad():
+            model.eval()
+            test_loss, correct, total = 0, 0, 0
+            for i, (images, labels) in enumerate(test_dataloader):
+                images, labels = images.to(device), labels.to(device)
+
+                output = model(images)
+                test_loss += module_loss.robust_loss(output, labels).item()
+
+                pred = output.max(1, keepdim=True)[1]
+                correct += pred.eq(labels.view_as(pred)).sum().item()
+
+                total += labels.size(0)
+
+        print('[Test set] Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)\n'.format(
+            test_loss / total, correct, total,
+            100. * correct / total))
         scheduler.step()
     for param in model.parameters():
         param.requires_grad = True
-    for epoch in range(5):
-        print(f"{3+epoch}th epoch starting.")
+    for epoch in range(second_epochs):
+        print(f"{first_epochs+epoch}th epoch starting.")
         #만약 epoch이 3이면 모든 파라미터를 훈련
         for i, (images, labels) in enumerate(train_dataloader):
             images, labels = images.to(device), labels.to(device)
@@ -126,39 +144,28 @@ if __name__ == '__main__':
             train_loss.backward()
 
             optimizer.step()
-        torch.save(model.state_dict(), f'{epoch} model.pt')
+        torch.save(f'model/pretrained/emotion/{model.state_dict()}', f'{epoch}model.pt')
         scheduler.step()
-        # model.eval()
-        # running_train_loss = 0.0
-        # running_test_loss = 0.0
-        # for i, (images, labels) in enumerate(train_dataloader, 0):
-        #     images, labels = images.to(device), labels.to(device)
-        #     running_train_loss += loss_function(model(images), labels).item() / images.shape[0]
-        # for i, (images, labels) in enumerate(test_dataloader, 0):
-        #     images, labels = images.to(device), labels.to(device)
-        #     running_test_loss += loss_function(model(images), labels).item() / images.shape[0]
-        # train_losses.append(running_train_loss)
-        # test_losses.append(running_test_loss)
 
-    model.eval()
-    test_loss, correct, total = 0, 0, 0
-    for i, (images, labels) in enumerate(test_dataloader):
-        images, labels = images.to(device), labels.to(device)
+        with torch.no_grad():
+            model.eval()
+            test_loss, correct, total = 0, 0, 0
+            for i, (images, labels) in enumerate(test_dataloader):
+                images, labels = images.to(device), labels.to(device)
 
-        output = model(images)
-        test_loss += module_loss.robust_loss(output, labels).item()
+                output = model(images)
+                test_loss += module_loss.robust_loss(output, labels).item()
 
-        pred = output.max(1, keepdim=True)[1]
-        correct += pred.eq(labels.view_as(pred)).sum().item()
+                pred = output.max(1, keepdim=True)[1]
+                correct += pred.eq(labels.view_as(pred)).sum().item()
 
-        total += labels.size(0)
+                total += labels.size(0)
 
-    print('[Test set] Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)\n'.format(
-        test_loss / total, correct, total,
-        100. * correct / total))
+            print('[Test set] Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)\n'.format(
+                test_loss / total, correct, total,
+                100. * correct / total))
     # plt.plot(test_losses, label="test_loss")
     # plt.plot(train_losses, label="train_loss")
     # plt.legend()
     # plt.show()
 
-    torch.save(model.state_dict(), 'model.pt')

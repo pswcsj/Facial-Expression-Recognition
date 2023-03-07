@@ -98,14 +98,32 @@ class FERTestDataSet(Dataset):
 class AffectNetDataLoader(DataLoader):
     def __init__(self, path, batch_size, train=True, shuffle=True, num_workers=0):
         if train:
-            trsfm = transforms.Compose([
-                transforms.RandomHorizontalFlip(),
-                transforms.RandomRotation((-45, 45)),
-                transforms.ColorJitter(brightness=0.5),
-                transforms.ToTensor()
-            ])
+            trsfm = transforms.Compose(
+                [
+                    transforms.Resize((256, 256)),
+                    transforms.RandomResizedCrop(224),
+                    transforms.RandomHorizontalFlip(),
+                    transforms.ToTensor(),
+                    transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                         std=[0.229, 0.224, 0.225])
+                ]
+            )
+            # trsfm = transforms.Compose([
+            #     transforms.RandomHorizontalFlip(),
+            #     transforms.RandomRotation((-45, 45)),
+            #     transforms.ColorJitter(brightness=0.5),
+            #     transforms.ToTensor()
+            # ])
         else:
-            trsfm = transforms.ToTensor()
+            trsfm = transforms.Compose(
+                [
+                    transforms.Resize((IMG_SIZE, IMG_SIZE)),
+                    # transforms.RandomHorizontalFlip(),
+                    transforms.ToTensor(),
+                    transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                         std=[0.229, 0.224, 0.225])
+                ]
+            )
 
         self.dataset = AffectNetDataset(path, train=train, transform=trsfm)
         super().__init__(dataset=self.dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
