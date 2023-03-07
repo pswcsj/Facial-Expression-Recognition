@@ -117,7 +117,7 @@ class AffectNetDataLoader(DataLoader):
         else:
             trsfm = transforms.Compose(
                 [
-                    transforms.Resize((IMG_SIZE, IMG_SIZE)),
+                    transforms.Resize((224, 224)),
                     # transforms.RandomHorizontalFlip(),
                     transforms.ToTensor(),
                     transforms.Normalize(mean=[0.485, 0.456, 0.406],
