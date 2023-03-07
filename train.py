@@ -43,7 +43,6 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(model.parameters(), lr=3e-5)
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=gamma)
 
-    model.train()
 
     #마지막 레이어 빼고 freeze
     for param in model.parameters():
@@ -52,6 +51,8 @@ if __name__ == '__main__':
     model._fc.bias.requires_grad = True
     
     for epoch in range(first_epochs):
+        model.train()
+
         print(f"{epoch}th epoch starting.")
         for i, (images, labels) in enumerate(train_dataloader):
             images, labels = images.to(device), labels.to(device)
@@ -113,6 +114,8 @@ if __name__ == '__main__':
     train_dataloader = AffectNetDataLoader(path=path, batch_size=64, train=True)  # 학습용 데이터셋
 
     for epoch in range(second_epochs):
+        model.train()
+
         print(f"{first_epochs+epoch}th epoch starting.")
         #만약 epoch이 3이면 모든 파라미터를 훈련
         for i, (images, labels) in enumerate(train_dataloader):
