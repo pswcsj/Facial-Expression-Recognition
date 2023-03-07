@@ -61,7 +61,6 @@ def make_model_from_pretrained(weights_path):
                     setattr(module, key.split('.')[-1], nn.Parameter(value.float()))
                 else:
                     setattr(module, key.split('.')[-1], value.float())
-                print(module, key)
 
                 if state_dict:
                     key, value = state_dict.popitem(last=False)
