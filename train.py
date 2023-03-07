@@ -144,7 +144,7 @@ if __name__ == '__main__':
             train_loss.backward()
 
             optimizer.step()
-        torch.save(f'model/pretrained/emotion/{model.state_dict()}', f'{epoch}model.pt')
+        torch.save(f'model/pretrained/emotion/{model.state_dict()}', f'{first_epochs+epoch}model.pt')
         scheduler.step()
 
         with torch.no_grad():
