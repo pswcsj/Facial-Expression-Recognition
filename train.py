@@ -28,7 +28,6 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 epochs = args.epochs
 path = args.path
 batch_size = args.batch
-gamma = 0.7
 first_epochs = 3
 second_epochs = 5
 
