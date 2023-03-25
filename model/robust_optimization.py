@@ -11,8 +11,6 @@ class RobustOptimizer(torch.optim.Optimizer):
 
     @torch.no_grad()
     def first_step(self, zero_grad=False):
-        param = []
-        param_vector = []
         grad_norm = self._grad_norm()
         for group in self.param_groups:
             scale = group["rho"] / (grad_norm + 1e-12)
@@ -22,24 +20,16 @@ class RobustOptimizer(torch.optim.Optimizer):
                 e_w = p.grad * scale.to(p)
                 p.add_(e_w)
                 self.state[p]["e_w"] = e_w
-                param.append(p)
-                param_vector.append(p.grad)
-        print(f'first_step|grad_nrom:{grad_norm}|param:{param[:5]}|param_grad:{param_vector}')
         if zero_grad: self.zero_grad()
 
     @torch.no_grad()
     def second_step(self, zero_grad=False):
-        param = []
-        param_vector = []
         for group in self.param_groups:
             for p in group["params"]:
                 if p.grad is None: continue
                 p.sub_(self.state[p]["e_w"])
-                param.append(p)
-                param_vector.append(p.grad)
 
         self.base_optimizer.step()
-        print(f'first_step|grad_nrom:{grad_norm}|param:{param[:5]}|param_grad:{param_vector}')
         if zero_grad: self.zero_grad()
 
     @torch.no_grad()

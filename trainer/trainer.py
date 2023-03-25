@@ -2,6 +2,7 @@ import torch.optim as optim
 from tqdm import tqdm
 from model.robust_optimization import RobustOptimizer
 from model.loss import robust_loss
+import torch
 
 gamma = 0.7
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -15,13 +16,14 @@ def train(model, epochs, lr, train_dataloader, test_dataloader):
         model.train()
         for images, labels in tqdm(train_dataloader):
             images, labels = images.to(device), labels.to(device)
-
-            first_loss = robust_loss(model(images), labels)
+            output = model(images)
+            first_loss = robust_loss(output, labels)
             first_loss.backward()  # first_loss에 대한 weight의 gradient를 계산하여 model weight에 저장
             optimizer.first_step(zero_grad=True)
 
             # 중간 파라미터로 train_loss 계산
-            train_loss = robust_loss(model(images), labels)
+            output = model(images)
+            train_loss = robust_loss(output, labels)
             train_loss.backward()
             optimizer.second_step(zero_grad=True)
 
