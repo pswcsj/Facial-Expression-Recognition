@@ -6,8 +6,9 @@ from model.loss import robust_loss
 
 def train(model, epochs, lr, train_dataloader, test_dataloader):
     total_train_loss, train_correct, train_total = 0, 0, 0
-    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=gamma)
     optimizer = RobustOptimizer(filter(lambda p: p.requires_grad, model.parameters()), optim.Adam, lr=lr)
+    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=gamma)
+
     for epoch in range(epochs):
         model.train()
         for images, labels in tqdm(train_dataloader):
