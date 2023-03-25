@@ -38,7 +38,7 @@ def train(model, epochs, lr, train_dataloader, test_dataloader):
                 images, labels = images.to(device), labels.to(device)
 
                 output = model(images)
-                test_loss += module_loss.robust_loss(output, labels).item()
+                test_loss += robust_loss(output, labels).item()
 
                 pred = output.max(1, keepdim=True)[1]
                 correct += pred.eq(labels.view_as(pred)).sum().item()
