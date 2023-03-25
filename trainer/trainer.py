@@ -9,12 +9,12 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
 def train(model, epochs, lr, train_dataloader, test_dataloader):
-    total_train_loss, train_correct, train_total = 0, 0, 0
     optimizer = RobustOptimizer(filter(lambda p: p.requires_grad, model.parameters()), optim.Adam, lr=lr)
     # scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=gamma)
 
     for epoch in range(epochs):
         model.train()
+        total_train_loss, train_correct, train_total = 0, 0, 0
         for images, labels in tqdm(train_dataloader):
             images, labels = images.to(device), labels.to(device)
             output = model(images)
