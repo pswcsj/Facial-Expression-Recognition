@@ -7,6 +7,7 @@ import torch
 gamma = 0.7
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+
 def train(model, epochs, lr, train_dataloader, test_dataloader):
     total_train_loss, train_correct, train_total = 0, 0, 0
     optimizer = RobustOptimizer(filter(lambda p: p.requires_grad, model.parameters()), optim.Adam, lr=lr)
@@ -30,6 +31,7 @@ def train(model, epochs, lr, train_dataloader, test_dataloader):
             total_train_loss = total_train_loss + train_loss
             pred = output.max(1, keepdim=True)[1]
             train_correct += pred.eq(labels.view_as(pred)).sum().item()
+            train_total += labels.size(0)
         torch.save(f'model/pretrained/emotion/{model.state_dict()}', f'{epoch}model.pt')
         with torch.no_grad():
             model.eval()
