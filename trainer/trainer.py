@@ -4,6 +4,7 @@ from model.robust_optimization import RobustOptimizer
 from model.loss import robust_loss
 
 gamma = 0.7
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def train(model, epochs, lr, train_dataloader, test_dataloader):
     total_train_loss, train_correct, train_total = 0, 0, 0
