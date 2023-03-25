@@ -40,7 +40,7 @@ if __name__ == '__main__':
     model.classifier = torch.nn.Identity()
     # model.load_state_dict(torch.load('model/pretrained/face_recognition/ENetB2_VggFace2.pt', map_location=torch.device('cpu')))
     model.load_state_dict(torch.load('model/pretrained/face_recognition/ENetB2_VggFace2.pt'))
-    model.classifier = nn.Sequential(nn.Linear(in_features=1408, out_features=5))
+    model.classifier = nn.Linear(in_features=1408, out_features=5)
     model = model.to(device)
     print(model)
 
