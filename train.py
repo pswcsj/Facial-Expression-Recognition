@@ -44,22 +44,19 @@ if __name__ == '__main__':
     model = model.to(device)
     print(model)
 
-    # optimizer로는 Adam 사용
-    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=gamma)
-
     #마지막 레이어 빼고 freeze
     for param in model.parameters():
         param.requires_grad = False
     model.classifier.weight.requires_grad = True
     model.classifier.bias.requires_grad = True
     
-    train(model, first_epochs, 3e-5, train_dataloader, test_dataloader, scheduler)
+    train(model, first_epochs, 3e-5, train_dataloader, test_dataloader)
     for param in model.parameters():
         param.requires_grad = True
 
     del train_dataloader
     train_dataloader = AffectNetDataLoader(path=path, batch_size=64, train=True)  # 학습용 데이터셋
-    train(model, second_epochs, 3e-5, train_dataloader, test_dataloader, scheduler)
+    train(model, second_epochs, 3e-5, train_dataloader, test_dataloader)
     # plt.plot(test_losses, label="test_loss")
     # plt.plot(train_losses, label="train_loss")
     # plt.legend()
