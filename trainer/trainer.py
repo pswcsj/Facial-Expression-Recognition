@@ -11,7 +11,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 def train(model, epochs, lr, train_dataloader, test_dataloader):
     total_train_loss, train_correct, train_total = 0, 0, 0
     optimizer = RobustOptimizer(filter(lambda p: p.requires_grad, model.parameters()), optim.Adam, lr=lr)
-    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=gamma)
+    # scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=gamma)
 
     for epoch in range(epochs):
         model.train()
@@ -32,7 +32,7 @@ def train(model, epochs, lr, train_dataloader, test_dataloader):
             pred = output.max(1, keepdim=True)[1]
             train_correct += pred.eq(labels.view_as(pred)).sum().item()
             train_total += labels.size(0)
-        torch.save(f'model/pretrained/emotion/{model.state_dict()}', f'{epoch}model.pt')
+        torch.save(model.state_dict(), f'model/pretrained/emotion/{epoch}model.pt')
         with torch.no_grad():
             model.eval()
             test_loss, correct, test_total = 0, 0, 0
@@ -49,4 +49,4 @@ def train(model, epochs, lr, train_dataloader, test_dataloader):
         print(
             f"Epoch{epoch}/{epochs} - loss : {total_train_loss:.4f} - acc: {100. * train_correct / train_total:.4f} - test_loss : {test_loss:.4f} - test_acc: {100. * correct / test_total:.4f}"
         )
-        scheduler.step()
+        # scheduler.step()

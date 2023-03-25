@@ -49,7 +49,7 @@ if __name__ == '__main__':
     model.classifier.weight.requires_grad = True
     model.classifier.bias.requires_grad = True
     
-    train(model, first_epochs, 3e-5, train_dataloader, test_dataloader)
+    train(model, first_epochs, 1e-3, train_dataloader, test_dataloader)
     for param in model.parameters():
         param.requires_grad = True
 
